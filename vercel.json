@@ -1,0 +1,16 @@
+{
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "/api/$1"
+        }
+    ],
+    "functions": {
+        "api/get_form_fields.js": {
+            "memory": 128
+        },
+        "api/submit_form.js": {
+            "memory": 256
+        }
+    }
+}
