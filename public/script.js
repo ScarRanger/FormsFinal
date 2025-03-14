@@ -6,7 +6,7 @@ const statisurl = "https://8383-2401-4900-52b2-2d88-e19e-4232-5d1f-969e.ngrok-fr
 
 async function loadFormFields() {
     try {
-        const response = await fetch(statisurl+'/get_form_fields'); // Fetch form fields from backend
+        const response = await fetch("/get_form_fields"); // Fetch form fields from backend
         const fields = await response.json();
 
         const form = document.getElementById('dynamicForm');
@@ -191,7 +191,7 @@ async function submitForm(e) {
     }
 
     try {
-        const response = await fetch(statisurl+"/submit_form", {
+        const response = await fetch('/submit_form', {
             method: 'POST',
             body: formData
         });
