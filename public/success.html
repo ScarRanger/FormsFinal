@@ -33,11 +33,17 @@
         }
         .uploaded-image {
             max-width: 100%;
+            max-height: 100%;
+            width: 200px; 
+            height: 200px;    
             height: auto;
             margin-top: 15px;
             display: none;
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .btn-container {
             margin-top: 20px;
@@ -56,28 +62,31 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const params = new URLSearchParams(window.location.search);
-            const userDetailsDiv = document.getElementById('userDetails');
-            const uploadedImage = document.getElementById("uploadedImage");
+    const params = new URLSearchParams(window.location.search);
+    const userDetailsDiv = document.getElementById('userDetails');
+    const uploadedImage = document.getElementById("uploadedImage");
 
-            params.forEach((value, key) => {
-                if (key.toLowerCase() !== "submit") { // Exclude "submit" field
-                    const p = document.createElement('p');
-                    p.textContent = `${key}: ${value}`;
-                    userDetailsDiv.appendChild(p);
-                }
-            });
-
-            // Retrieve the stored image from session storage
-            const imageSrc = sessionStorage.getItem("uploadedImage");
-            if (imageSrc) {
-                uploadedImage.src = imageSrc;
-                uploadedImage.style.display = "block";
-
-                // Optional: Remove image from sessionStorage after displaying
-                sessionStorage.removeItem("uploadedImage");
+    params.forEach((value, key) => {
+        if (key.toLowerCase() !== "submit" && key.toLowerCase() !== "file") { // Exclude "submit" & file input fields
+            if (value !== "[object File]") { // Extra safeguard against file object display
+                const p = document.createElement('p');
+                p.textContent = `${key}: ${value}`;
+                userDetailsDiv.appendChild(p);
             }
-        });
+        }
+    });
+
+    // Retrieve the stored image from session storage
+    const imageSrc = sessionStorage.getItem("uploadedImage");
+    if (imageSrc) {
+        uploadedImage.src = imageSrc;
+        uploadedImage.style.display = "block";
+
+        // Optional: Remove image from sessionStorage after displaying
+        sessionStorage.removeItem("uploadedImage");
+    }
+});
+
 
         function submitAnotherResponse() {
             window.location.href = 'index.html'; // Redirect to the form page

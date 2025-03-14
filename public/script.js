@@ -2,11 +2,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     await loadFormFields(); // Load form fields dynamically when page loads
 });
 
-const statisurl = "https://8383-2401-4900-52b2-2d88-e19e-4232-5d1f-969e.ngrok-free.app"
 
 async function loadFormFields() {
     try {
-        const response = await fetch("/get_form_fields"); // Fetch form fields from backend
+        const response = await fetch("/get_form_fields");
         const fields = await response.json();
 
         const form = document.getElementById('dynamicForm');
@@ -103,8 +102,7 @@ function previewImage(event) {
     }
 }
 
-// Form submission
-// Function to show loading overlay with Bootstrap spinner
+// Function to show loading overlay
 function showLoadingOverlay() {
     let overlay = document.createElement('div');
     overlay.id = 'loadingOverlay';
@@ -124,7 +122,7 @@ function showLoadingOverlay() {
             <div class="spinner-border text-light" role="status">
                 <span class="visually-hidden">Uploading...</span>
             </div>
-            <p class="mt-2">Submitting.....</p>
+            <p class="mt-2">Submitting..... <br> Please be patient while the image / data is getting uploaded</p>
         </div>
     `;
 
@@ -139,7 +137,7 @@ function hideLoadingOverlay() {
     }
 }
 
-// Updated form submission function
+// ✅ **Updated form submission function**
 async function submitForm(e) {
     e.preventDefault();
     showLoadingOverlay(); // Show spinner overlay
@@ -168,12 +166,12 @@ async function submitForm(e) {
         if (input.type === 'file' && input.files.length > 0) {
             if (input.files[0].size > 5 * 1024 * 1024) {
                 showError(null, "File is too large! Maximum size is 5MB.");
-                hideLoadingOverlay(); // Hide overlay if file is too large
+                hideLoadingOverlay();
                 return;
             }
             formData.append(input.id, input.files[0]);
 
-            // Convert image to base64 and store it for success page
+            // Convert image to base64 for success page preview
             const reader = new FileReader();
             reader.onload = function (event) {
                 sessionStorage.setItem("uploadedImage", event.target.result);
@@ -198,21 +196,16 @@ async function submitForm(e) {
 
         const result = await response.json();
         if (result.success) {
-            alert("Data stored successfully!");
-
-            document.getElementById("dynamicForm").reset();
-            document.getElementById("imagePreview").src = "";
-            document.getElementById("imagePreview").style.display = "none";
-
             hideLoadingOverlay(); // Hide overlay after success
 
             const queryParams = new URLSearchParams();
             formData.forEach((value, key) => {
-                if (key !== "submit") { // Exclude "submit" field
+                if (key !== "submit") { 
                     queryParams.append(key.charAt(0).toUpperCase() + key.slice(1), value);
                 }
             });
 
+            // ✅ Redirect to success page **WITHOUT alert**
             window.location.href = `success.html?${queryParams.toString()}`;
         } else {
             console.error("Error submitting data:", result.message);
@@ -227,58 +220,28 @@ async function submitForm(e) {
     }
 }
 
-
-
-
 // Email validation function
 function validateEmail(input) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const isValid = re.test(input.value);
-    if (!isValid) {
-        showError(input, "Please enter a valid email address.");
-    } else {
-        clearError(input);
-    }
-    return isValid;
+    return re.test(input.value);
 }
 
 // Phone number validation function
 function validatePhone(input) {
     const re = /^(?:0\d{10}|\d{10})$/;
-    const isValid = re.test(input.value);
-    if (!isValid) {
-        showError(input, "Please enter a valid phone number.");
-    } else {
-        clearError(input);
-    }
-    return isValid;
+    return re.test(input.value);
 }
 
-// Show error message below the input field or in the general error container
+// Show error messages
 function showError(input, message) {
-    if (input) {
-        clearError(input);
-        const error = document.createElement('div');
-        error.classList.add('error-message');
-        error.textContent = message;
-        input.parentNode.appendChild(error);
-    } else {
-        const errorContainer = document.getElementById('errorContainer');
-        errorContainer.textContent = message;
-        errorContainer.style.display = 'block';
-    }
+    const errorContainer = document.getElementById('errorContainer');
+    errorContainer.textContent = message;
+    errorContainer.style.display = 'block';
 }
 
-// Clear error message below the input field or in the general error container
-function clearError(input) {
-    if (input) {
-        const error = input.parentNode.querySelector('.error-message');
-        if (error) {
-            error.remove();
-        }
-    } else {
-        const errorContainer = document.getElementById('errorContainer');
-        errorContainer.textContent = '';
-        errorContainer.style.display = 'none';
-    }
+// Clear error messages
+function clearError() {
+    const errorContainer = document.getElementById('errorContainer');
+    errorContainer.textContent = '';
+    errorContainer.style.display = 'none';
 }
